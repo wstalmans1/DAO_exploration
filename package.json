@@ -1,0 +1,16 @@
+{
+  "name": "DAO_exploration_root",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@10.16.1+sha512.0e155aa2629db8672b49e8475da6226aa4bdea85fdcdfdc15350874946d4f3c91faaf64cbdc4a5d1ab8002f473d5c3fcedcd197989cf0390f9badd3c04678706",
+  "scripts": {
+    "dev": "pnpm --filter @app/web dev",
+    "build": "pnpm --filter @app/web build",
+    "preview": "pnpm --filter @app/web preview",
+    "compile": "pnpm --filter @pkg/contracts hardhat compile",
+    "test": "pnpm --filter @pkg/contracts hardhat test",
+    "coverage": "pnpm --filter @pkg/contracts hardhat coverage",
+    "deploy:sepolia": "pnpm --filter @pkg/contracts hardhat ignition deploy ignition/modules/Dao.ts --parameters ignition/params.json --network sepolia --verify",
+    "sync:abi": "pnpm -r run sync:abi"
+  }
+}

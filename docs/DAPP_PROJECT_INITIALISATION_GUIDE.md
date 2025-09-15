@@ -35,7 +35,7 @@ printf "v22\n" > .nvmrc
 printf "packages:\n  - 'apps/*'\n  - 'packages/*'\n" > pnpm-workspace.yaml
 
 # Root package for scripts & pinning
-pnpm init -y
+pnpm init
 ```
 
 **`package.json` (root)**
@@ -100,35 +100,33 @@ pnpm add wagmi viem @tanstack/react-query @rainbow-me/rainbowkit
 **`src/config/wagmi.ts`**
 
 ```ts
-import { createConfig, http } from 'wagmi'
-import { mainnet, polygon, optimism, arbitrum, sepolia } from 'wagmi/chains'
+// src/config/wagmi.ts
 import { getDefaultConfig } from '@rainbow-me/rainbowkit'
-import { fallback, webSocket } from 'viem'
+import { mainnet, polygon, optimism, arbitrum, sepolia } from 'wagmi/chains'
+import { http, webSocket, fallback } from 'viem'
 
+// Helper to build resilient WS+HTTP transports
 const transport = (rpc: string) => fallback([webSocket(rpc), http(rpc)])
 
-export const config = createConfig(
-  getDefaultConfig({
-    appName: 'DAO dApp',
-    projectId: import.meta.env.VITE_WALLETCONNECT_ID!, // WC project id
-    chains: [mainnet, polygon, optimism, arbitrum, sepolia],
-    transports: {
-      [mainnet.id]: transport(import.meta.env.VITE_MAINNET_RPC!),
-      [polygon.id]: transport(import.meta.env.VITE_POLYGON_RPC!),
-      [optimism.id]: transport(import.meta.env.VITE_OPTIMISM_RPC!),
-      [arbitrum.id]: transport(import.meta.env.VITE_ARBITRUM_RPC!),
-      [sepolia.id]: transport(import.meta.env.VITE_SEPOLIA_RPC!)
-    },
-    multiInjectedProviderDiscovery: true, // EIP-6963
-    ssr: false
-  })
-)
+export const config = getDefaultConfig({
+  appName: 'DAO dApp',
+  projectId: import.meta.env.VITE_WALLETCONNECT_ID!, // WalletConnect Project ID
+  chains: [mainnet, polygon, optimism, arbitrum, sepolia],
+  transports: {
+    [mainnet.id]: transport(import.meta.env.VITE_MAINNET_RPC!),
+    [polygon.id]: transport(import.meta.env.VITE_POLYGON_RPC!),
+    [optimism.id]: transport(import.meta.env.VITE_OPTIMISM_RPC!),
+    [arbitrum.id]: transport(import.meta.env.VITE_ARBITRUM_RPC!),
+    [sepolia.id]: transport(import.meta.env.VITE_SEPOLIA_RPC!)
+  },
+  multiInjectedProviderDiscovery: true, // EIP-6963
+  ssr: false
+})
 ```
 
 **`src/main.tsx`**
 
 ```tsx
-import React from 'react'
 import ReactDOM from 'react-dom/client'
 import { WagmiProvider } from 'wagmi'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
